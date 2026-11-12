@@ -8,12 +8,15 @@
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="art/base.css">
 <link rel="stylesheet" href="art/shelf.css">
+<link rel="stylesheet" href="art/background.css">
 </head>
 <body>
+<div class="bg-layer" id="bgLayer" aria-hidden="true"></div>
 <header class="top">
   <a class="brand" href="index.html">my cozy diary</a>
   <div class="actions">
     <a class="btn" href="author.html">✒ Author <span class="beta">beta</span></a>
+    <button class="btn" id="bgBtn">🖼 Background</button>
     <a class="btn" href="backup.html">💾 Backup</a>
     <button class="btn primary" id="newBook">+ New notebook</button>
   </div>
@@ -27,5 +30,6 @@
 </main>
 <script src="behavior/common.js"></script>
 <script src="behavior/shelf.js"></script>
+<script src="behavior/background.js"></script>
 </body>
 </html>

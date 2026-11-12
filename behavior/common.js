@@ -1,6 +1,4 @@
-/* Shared core: storage engine, writer/pen-name helpers, backup tools, edit dialog.
-   Storage: IndexedDB (durable, roomy) + an instant localStorage mirror (so a page change never loses a keystroke).
-   Pages must wait for it:  Store.ready.then(() => { ... })                                                      */
+                                                    */
 const Store = (() => {
   const KEY = 'cozy-diary-v1', VERSION = 2;
   const COLORS = ['#f2a7bb','#e86f93','#b9d66b','#7fa650','#e8913f','#c4562f','#f5c96a','#f7b79a',
@@ -70,8 +68,13 @@ const Store = (() => {
   /* ---- IndexedDB helpers ---- */
   const openDB = () => new Promise((res, rej) => {
     if (!window.indexedDB) return rej(new Error('no idb'));
-    let r; try { r = indexedDB.open('cozy-diary', 1); } catch (e) { return rej(e); }
-    r.onupgradeneeded = () => { r.result.createObjectStore('kv'); r.result.createObjectStore('snap', { keyPath: 'id', autoIncrement: true }); };
+    let r; try { r = indexedDB.open('cozy-diary', 2); } catch (e) { return rej(e); }
+    r.onupgradeneeded = () => {
+      const d = r.result;
+      if (!d.objectStoreNames.contains('kv')) d.createObjectStore('kv');
+      if (!d.objectStoreNames.contains('snap')) d.createObjectStore('snap', { keyPath: 'id', autoIncrement: true });
+      if (!d.objectStoreNames.contains('img')) d.createObjectStore('img');
+    };
     r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); r.onblocked = () => rej(new Error('blocked'));
   });
   const tx = (store, mode, fn) => new Promise((res, rej) => {
@@ -170,6 +173,23 @@ h4{margin:0;font-size:1.2rem}.m{margin:0 0 .4rem;color:#8a6870;font-size:.85rem}
   const estimate = async () => { try { return await navigator.storage.estimate(); } catch (e) { return null; } };
   const requestPersist = async () => { try { status.persisted = await navigator.storage.persist(); } catch (e) {} return status.persisted; };
 
+  /* ---- images ---- */
+  const imgKey = k => KEY + '-img-' + k;
+  const putImage = async (k, blob) => {
+    if (db) return tx('img', 'readwrite', s => s.put(blob, k));
+    const url = await new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(blob); });
+    localStorage.setItem(imgKey(k), url);
+  };
+  const getImage = async k => {
+    if (db) return (await tx('img', 'readonly', s => s.get(k))) || null;
+    const u = localStorage.getItem(imgKey(k));
+    return u ? (await fetch(u)).blob() : null;
+  };
+  const deleteImage = async k => {
+    if (db) return tx('img', 'readwrite', s => { s.delete(k); });
+    localStorage.removeItem(imgKey(k));
+  };
+
   /* ---- writer helpers ---- */
   const authorFor = (d = new Date()) => {
     const w = data.writer, m = w.authors.filter(a => a.slots.includes(slot(d)));
@@ -192,7 +212,7 @@ h4{margin:0;font-size:1.2rem}.m{margin:0 0 .4rem;color:#8a6870;font-size:.85rem}
 
   return { ready, get data() { return data; }, status, save, flush, uid, esc, slot, mkEntry, authorFor, promptFor, authorName,
     counts, exportJSON, exportHTML, parseBackup, replaceAll, merge, download, estimate, requestPersist,
-    snapshot, snapshotInfo, getSnapshot, deleteSnapshot, COLORS, SLOTS, SLOT_HINT, GREET, FONTS };
+    snapshot, snapshotInfo, getSnapshot, deleteSnapshot, putImage, getImage, deleteImage, COLORS, SLOTS, SLOT_HINT, GREET, FONTS };
 })();
 
 /* Reusable dialog: name (+ icon, time-of-day slots, handwriting) + 16 swatches + free color picker + optional delete */
