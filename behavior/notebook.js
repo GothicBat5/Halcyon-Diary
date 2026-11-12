@@ -1,354 +1,90 @@
-
-
-(() => {
-  const $ = (id) => document.getElementById(id);
-  const notebookId = new URLSearchParams(location.search).get('id');
-  const notebook = Store.data.notebooks.find((item) => item.id === notebookId);
-
-  if (!notebook) 
-  {
-    document.querySelector('.layout').innerHTML = `
-      <p class="empty">
-        That notebook isn’t on the shelf.
-        <a href="index.html">Back to the shelf</a>
-      </p>`;
+Store.ready.then(() => {
+  const $ = id => document.getElementById(id);
+  const nb = Store.data.notebooks.find(n => n.id === new URLSearchParams(location.search).get('id'));
+  if (!nb) {
+    document.querySelector('.layout').innerHTML = '<p class="empty" style="grid-column:1/-1">That notebook isn’t on the shelf. <a href="index.html">Back to the shelf</a></p>';
     return;
   }
 
-// states: 
+  let topicId = nb.topics[0]?.id, entryId = null, timer;
+  const topic = () => nb.topics.find(t => t.id === topicId);
+  const entry = () => topic()?.entries.find(e => e.id === entryId);
+  const fmt = d => new Date(d).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+  const authorName = e => (Store.data.writer.authors.find(a => a.id === e.author) || {}).name || e.authorName || '';
 
-  const state = {
-    topicId: notebook.topics[0]?.id ?? null,
-    entryId: null,
-  };
-
-  let saveTimer;
-
-  const currentTopic = () => notebook.topics.find((topic) => topic.id === state.topicId);
-  const currentEntry = () => currentTopic()?.entries.find((entry) => entry.id === state.entryId);
-
-
-  const formatDate = (date) => new Date(date).toLocaleDateString(undefined, {
-      weekday: 'short',
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
-
-  // Prefer the pen name's current name; fall back to the one it was signed with
-  const authorNameOf = (entry) => {
-    const author = Store.data.writer.authors.find((item) => item.id === entry.author);
-    return author?.name || entry.authorName || '';
-  };
-
-  const subtitleOf = (entry) => {
-    const name = authorNameOf(entry);
-    return formatDate(entry.date) + (name ? ` · ✒ ${name}` : '');
-  };
-
-  // Find a page's card in the list without needing to re-render it
-  const entryCard = (entry) =>
-    [...$('entryList').querySelectorAll('[data-entry]')].find(
-      (card) => card.dataset.entry === entry.id
-    );
-
-
-  const topicTemplate = (topic) => `
-    <li>
-      <div
-        class="topic ${topic.id === state.topicId ? 'on' : ''}"
-        data-topic="${Store.esc(topic.id)}"
-        style="--c:${Store.esc(topic.color)}"
-        role="button"
-        tabindex="0">
-        <i></i>
-        <span>${Store.esc(topic.name)}</span>
-        <button class="edit" aria-label="Edit topic">✎</button>
-      </div>
-    </li>`;
-
-  const entryTemplate = (entry, topic) => `
-    <li>
-      <button
-        class="entry ${entry.id === state.entryId ? 'on' : ''}"
-        data-entry="${Store.esc(entry.id)}"
-        style="--c:${Store.esc(topic.color)}">
-        <b>${Store.esc(entry.title || 'Untitled page')}</b>
-        <small>${Store.esc(subtitleOf(entry))}</small>
-        <p>${Store.esc(entry.body)}</p>
-      </button>
-    </li>`;
-
-  function renderHeader(topic, entry) 
-  {
-    // The accent colour follows the open page's topic, else the notebook
-    const accent = entry && topic ? topic.color : notebook.color;
-
-    document.documentElement.style.setProperty('--c', accent);
-    document.title = `${notebook.name} · My Cozy Diary`;
-    $('nbTitle').textContent = `${notebook.emoji} ${notebook.name}`;
-  }
-
-  function renderTopics() 
-  {
-    $('topicList').innerHTML =
-      notebook.topics.map(topicTemplate).join('') ||
-      '<li class="empty-note">Add a topic to begin.</li>';
-  }
-
-  function renderEntries(topic) 
-  {
-    $('newEntry').disabled = !topic;
-
-    if (!topic) 
-    {
-      $('entryList').innerHTML = '';
-      return;
-    }
-
-    if (!topic.entries.length) 
-    {
-      $('entryList').innerHTML = '<li class="empty-note">No pages yet. Start one!</li>';
-      return;
-    }
-
-    // Newest page first
-    $('entryList').innerHTML = [...topic.entries]
-      .reverse()
-      .map((entry) => entryTemplate(entry, topic))
-      .join('');
-  }
-
-  function renderEditor(entry) 
-  {
-    $('editor').classList.toggle('has', Boolean(entry));
-    if (!entry) return;
-
-    $('entryTitle').value = entry.title;
-    $('entryBody').value = entry.body;
-    $('entryDate').textContent = formatDate(entry.date);
-    $('saved').textContent = '';
-
-    const authors = Store.data.writer.authors;
-
-    const options = authors.map((author) => {
-      const selected = author.id === entry.author ? 'selected' : '';
-      const label = Store.esc(`${author.emoji} ${author.name}`);
-      return `<option value="${Store.esc(author.id)}" ${selected}>${label}</option>`;
-    });
-
-    // The pen name was deleted: keep showing the one the page was signed with
-    if (!authors.some((author) => author.id === entry.author)) 
-    {
-      options.unshift(`
-        <option value="${Store.esc(entry.author || '')}" selected>
-          ${Store.esc(entry.authorName || 'Unknown')}
-        </option>`);
-    }
-
-    $('entryAuthor').innerHTML = options.join('');
-    renderCount(entry);
+  function applyFont(key) {
+    const f = Store.FONTS[key], p = $('paper');
+    if (f && f.css) { p.style.setProperty('--hand', f.css); p.style.setProperty('--hand-size', f.size); }
+    else { p.style.removeProperty('--hand'); p.style.removeProperty('--hand-size'); }
   }
 
   function render() {
-    const topic = currentTopic();
-    const entry = currentEntry();
-
-    renderHeader(topic, entry);
-    renderTopics();
-    renderEntries(topic);
-    renderEditor(entry);
+    const t = topic(), e = entry();
+    document.documentElement.style.setProperty('--c', e && t ? t.color : nb.color);
+    $('nbTitle').textContent = nb.emoji + ' ' + nb.name;
+    document.title = nb.name + ' · My Cozy Diary';
+    $('topicList').innerHTML = nb.topics.map(x => `
+      <li><div class="topic ${x.id === topicId ? 'on' : ''}" data-t="${x.id}" style="--c:${x.color}" role="button" tabindex="0">
+        <i></i><span>${Store.esc(x.name)}</span><button class="edit" aria-label="Edit topic">✎</button></div></li>`).join('')
+      || '<li class="empty-note">Add a topic to begin.</li>';
+    $('newEntry').disabled = !t;
+    $('entryList').innerHTML = t ? (t.entries.length ? [...t.entries].reverse().map(x => `
+      <li><button class="entry ${x.id === entryId ? 'on' : ''}" data-e="${x.id}" style="--c:${t.color}">
+        <b>${Store.esc(x.title || 'Untitled page')}</b><small>${fmt(x.date)}${authorName(x) ? ' · ✒ ' + Store.esc(authorName(x)) : ''}</small><p>${Store.esc(x.body)}</p></button></li>`).join('')
+      : '<li class="empty-note">No pages yet. Start one!</li>') : '';
+    $('editor').classList.toggle('has', !!e);
+    if (e) {
+      $('entryTitle').value = e.title; $('entryBody').value = e.body; $('entryDate').textContent = fmt(e.date); $('saved').textContent = '';
+      const list = Store.data.writer.authors.slice();
+      const opts = list.map(a => `<option value="${a.id}" ${a.id === e.author ? 'selected' : ''}>${Store.esc(a.emoji + ' ' + a.name)}</option>`);
+      if (!list.some(a => a.id === e.author)) opts.unshift(`<option value="${Store.esc(e.author || '')}" selected>${Store.esc(e.authorName || 'Unknown')}</option>`);
+      $('entryAuthor').innerHTML = opts.join('');
+      applyFont((list.find(a => a.id === e.author) || {}).font);
+      $('entryBody').placeholder = Store.promptFor();
+    }
   }
 
-  // Move to a topic and/or page, then redraw
-  function select(topicId, entryId) 
-  {
-    state.topicId = topicId;
-    state.entryId = entryId;
-
-    // Only matters on phones, where the editor replaces the pages list
-    $('layout').classList.toggle('editing', Boolean(entryId));
-
-    render();
-  }
-
-
-  /* ==========================================================================
-     Writing: autosave and signing
-     ========================================================================== */
-
-  function autosave() 
-  {
-    const entry = currentEntry();
-    if (!entry) return;
-
-    entry.title = $('entryTitle').value;
-    entry.body = $('entryBody').value;
-    renderCount(entry);
-
+  function autosave() {
+    const e = entry(); if (!e) return;
+    e.title = $('entryTitle').value; e.body = $('entryBody').value;
     $('saved').textContent = 'saving…';
-    clearTimeout(saveTimer);
-
-    saveTimer = setTimeout(() => {
-      Store.save();
-      $('saved').textContent = 'saved ♡';
-
-      // Update the list text without re-rendering (and stealing focus from) the editor
-      const card = entryCard(entry);
-      if (!card) return;
-
-      card.querySelector('b').textContent = entry.title || 'Untitled page';
-      card.querySelector('p').textContent = entry.body;
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      Store.save(); $('saved').textContent = 'saved ♡';
+      const on = document.querySelector('.entry.on'); // update list text without re-rendering the editor
+      if (on) { on.querySelector('b').textContent = e.title || 'Untitled page'; on.querySelector('p').textContent = e.body; }
     }, 500);
   }
+  $('entryTitle').oninput = $('entryBody').oninput = autosave;
 
-function renderCount(entry) 
-{
-    const countWords = (text) => {
-    const trimmed = text.trim();
-    return trimmed ? trimmed.split(/\s+/).length : 0;
-  };
-  const words = countWords(entry.body);
-  $('wordCount').textContent = `${words} ${words === 1 ? 'word' : 'words'}`;
-}
-
-  $('entryTitle').addEventListener('input', autosave);
-  $('entryBody').addEventListener('input', autosave);
-
-  $('entryAuthor').addEventListener('change', () => {
-    const entry = currentEntry();
-    const author = Store.data.writer.authors.find((item) => item.id === $('entryAuthor').value);
-    if (!entry || !author) return;
-
-    entry.author = author.id;
-    entry.authorName = author.name;
-    Store.save();
-
-    const card = entryCard(entry);
-    if (card) card.querySelector('small').textContent = subtitleOf(entry);
-
+  $('entryAuthor').onchange = () => {
+    const e = entry(), a = Store.data.writer.authors.find(x => x.id === $('entryAuthor').value); if (!e || !a) return;
+    e.author = a.id; e.authorName = a.name; Store.save(); applyFont(a.font);
+    const small = document.querySelector('.entry.on small'); if (small) small.textContent = fmt(e.date) + ' · ✒ ' + a.name;
     $('saved').textContent = 'signed ♡';
+  };
+
+  function pick(t, e) { topicId = t; entryId = e; $('layout').classList.toggle('editing', !!e); render(); }
+
+  $('topicList').addEventListener('click', ev => {
+    const row = ev.target.closest('[data-t]'); if (!row) return;
+    const t = nb.topics.find(x => x.id === row.dataset.t);
+    
+    if (ev.target.closest('.edit')) return openEditor({ title: 'Edit topic', name: t.name, color: t.color,
+      onSave: v => { t.name = v.name; t.color = v.color; Store.save(); render(); },
+      onDelete: () => { nb.topics = nb.topics.filter(x => x !== t); Store.save(); pick(nb.topics[0]?.id, null); } });
+    pick(t.id, null);
   });
+  $('topicList').addEventListener('keydown', ev => { if (ev.key === 'Enter' && ev.target.dataset.t) ev.target.click(); });
+  $('entryList').addEventListener('click', ev => { const b = ev.target.closest('[data-e]'); if (b) pick(topicId, b.dataset.e); });
 
-
-  function editTopic(topic) 
-  {
-    openEditor({
-      title: 'Edit topic',
-      name: topic.name,
-      color: topic.color,
-
-      onSave: (values) => {
-        topic.name = values.name;
-        topic.color = values.color;
-        Store.save();
-        render();
-      },
-
-      onDelete: () => {
-        notebook.topics = notebook.topics.filter((item) => item !== topic);
-        Store.save();
-        select(notebook.topics[0]?.id ?? null, null);
-      },
-    });
-  }
-
-  $('topicList').addEventListener('click', (event) => {
-    const row = event.target.closest('[data-topic]');
-    if (!row) return;
-
-    const topic = notebook.topics.find((item) => item.id === row.dataset.topic);
-    if (!topic) return;
-
-    if (event.target.closest('.edit')) {
-      editTopic(topic);
-      return;
-    }
-
-    select(topic.id, null);
-  });
-
-  // Topic rows are focusable "buttons", so Enter and Space should open them
-  $('topicList').addEventListener('keydown', (event) => {
-    const isRow = event.target.dataset.topic !== undefined;
-    const isActivationKey = event.key === 'Enter' || event.key === ' ';
-
-    if (isRow && isActivationKey) {
-      event.preventDefault();
-      event.target.click();
-    }
-  });
-
-  $('newTopic').addEventListener('click', () => {
-    openEditor({
-      title: 'New topic',
-      color: Store.COLORS[(notebook.topics.length * 2) % Store.COLORS.length],
-
-      onSave: (values) => {
-        const topic = {
-          id: Store.uid(),
-          name: values.name,
-          color: values.color,
-          entries: [],
-        };
-
-        notebook.topics.push(topic);
-        Store.save();
-        select(topic.id, null);
-      },
-    });
-  });
-
-
-  $('entryList').addEventListener('click', (event) => {
-    const card = event.target.closest('[data-entry]');
-    if (card) select(state.topicId, card.dataset.entry);
-  });
-
-  $('newEntry').addEventListener('click', () => {
-    const topic = currentTopic();
-    if (!topic) return;
-
-    const entry = Store.mkEntry('', '');
-
-    topic.entries.push(entry);
-    Store.save();
-    select(topic.id, entry.id);
-    $('entryTitle').focus();
-  });
-
-  $('delEntry').addEventListener('click', () => {
-    if (!confirm('Delete this page?')) return;
-
-    const topic = currentTopic();
-    if (!topic) return;
-
-    topic.entries = topic.entries.filter((entry) => entry.id !== state.entryId);
-    Store.save();
-    select(state.topicId, null);
-  });
-
-  // Phone only: go from the editor back to the pages list
-  $('backToList').addEventListener('click', () => select(state.topicId, null));
-
-//notebook cover
-  $('editBook').addEventListener('click', () => {
-    openEditor({
-      title: 'Notebook cover',
-      name: notebook.name,
-      emoji: notebook.emoji,
-      color: notebook.color,
-
-      onSave: (values) => {
-        notebook.name = values.name;
-        notebook.emoji = values.emoji;
-        notebook.color = values.color;
-        Store.save();
-        render();
-      },
-    });
-  });
-
+  $('newTopic').onclick = () => openEditor({ title: 'New topic', color: Store.COLORS[(nb.topics.length * 2) % Store.COLORS.length],
+    onSave: v => { const t = { id: Store.uid(), name: v.name, color: v.color, entries: [] }; nb.topics.push(t); Store.save(); pick(t.id, null); } });
+  $('newEntry').onclick = () => { const e = Store.mkEntry('', ''); topic().entries.push(e); Store.save(); pick(topicId, e.id); $('entryTitle').focus(); };
+  $('delEntry').onclick = () => { if (!confirm('Delete this page?')) return; const t = topic(); t.entries = t.entries.filter(e => e.id !== entryId); Store.save(); pick(topicId, null); };
+  $('backToList').onclick = () => pick(topicId, null);
+  $('editBook').onclick = () => openEditor({ title: 'Notebook cover', name: nb.name, emoji: nb.emoji, color: nb.color,
+    onSave: v => { nb.name = v.name; nb.emoji = v.emoji; nb.color = v.color; Store.save(); render(); } });
 
   render();
-})();
+});
