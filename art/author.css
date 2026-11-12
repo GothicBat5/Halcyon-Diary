@@ -1,63 +1,8 @@
-
-.author-page {
-  max-width: 780px;
-  margin: 0 auto;
-  padding: 1.5rem clamp(1rem, 4vw, 2.5rem) 4rem;
-}
-
-.author-page h1 {
-  margin: 0.4rem 0 1.2rem;
-  font: 700 clamp(2.4rem, 7vw, 3.6rem) / 1 var(--display);
+.page h1 {
+  font: 700 clamp(2.4rem, 7vw, 3.6rem)/1 var(--display);
   color: var(--plum);
+  margin: .4rem 0 1.2rem;
 }
-
-
-/* 
-   Card boxes
- */
-
-.card-box {
-  margin-bottom: 1.6rem;
-  padding: 1.2rem 1.4rem 1.4rem;
-  border: 2px solid var(--ink);
-  border-radius: var(--r);
-  background: #fffdf8;
-  box-shadow: 5px 5px 0 var(--pink);
-}
-
-.card-box h2 {
-  margin: 0;
-  font: 700 1.9rem var(--display);
-}
-
-.card-box .row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-}
-
-.card-box textarea {
-  resize: vertical;
-}
-
-.hint {
-  margin: 0.5rem 0;
-  color: var(--ink-soft);
-  font-size: 0.9rem;
-}
-
-.saved {
-  min-height: 1.4em;
-  margin: 0.4rem 0 0;
-  color: var(--plum);
-  font-weight: 700;
-}
-
-
-/* 
-   Pen names
- */
 
 .authors {
   display: grid;
@@ -69,71 +14,130 @@
 .pen {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  padding: 0.9rem;
+  gap: .5rem;
+  padding: .9rem;
   border: 2px solid var(--ink);
   border-radius: 14px;
   background: color-mix(in srgb, var(--c) 22%, #fff);
 }
 
-/* The pen name that would sign a new page right now */
 .pen.now {
-  box-shadow:
-    0 0 0 3px var(--paper),
-    0 0 0 5px var(--orange);
+  box-shadow: 0 0 0 3px var(--paper), 0 0 0 5px var(--orange);
 }
 
 .pen-head {
   display: flex;
+  gap: .7rem;
   align-items: center;
-  gap: 0.7rem;
 }
 
 .avatar {
-  flex: none;
-  display: grid;
-  place-items: center;
   width: 46px;
   height: 46px;
-  border: 2px solid var(--ink);
   border-radius: 50%;
+  border: 2px solid var(--ink);
   background: var(--c);
+  display: grid;
+  place-items: center;
   font-size: 1.5rem;
+  flex: none;
 }
 
 .pen b {
+  font: 700 1.4rem/1 var(--display);
   display: block;
-  font: 700 1.4rem / 1 var(--display);
 }
 
 .pen small {
   color: var(--ink-soft);
 }
 
-.pen-actions {
-  display: flex;
-  gap: 0.4rem;
-  margin-top: auto;
+.sample {
+  margin: 0;
+  padding: .2rem .6rem;
+  background: #fffdf8;
+  border-radius: 10px;
+  border: 2px dashed var(--line);
 }
-
-
-/* Little labels under each name */
 
 .tags {
   display: flex;
+  gap: .4rem;
   flex-wrap: wrap;
-  gap: 0.4rem;
 }
 
 .tag {
-  padding: 0 0.5rem;
   border: 2px solid var(--ink);
   border-radius: 999px;
   background: var(--paper);
-  font-size: 0.75rem;
+  font-size: .75rem;
   font-weight: 700;
+  padding: 0 .5rem;
 }
 
 .tag.def {
   background: var(--lime);
+}
+
+.pen-actions {
+  display: flex;
+  gap: .4rem;
+  margin-top: auto;
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: .7rem;
+  margin: .8rem 0;
+}
+
+.stat {
+  border: 2px solid var(--ink);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--lime) 28%, #fff);
+  padding: .5rem .8rem;
+  text-align: center;
+}
+
+.stat b {
+  display: block;
+  font: 700 2rem/1.1 var(--display);
+}
+
+.stat span {
+  font-size: .8rem;
+  color: var(--ink-soft);
+}
+
+.bars {
+  display: grid;
+  gap: .4rem;
+  margin-top: 1rem;
+}
+
+.bar {
+  display: grid;
+  grid-template-columns: 84px 1fr 28px;
+  align-items: center;
+  gap: .6rem;
+  font-size: .9rem;
+}
+
+.bar i {
+  display: block;
+  height: 16px;
+  min-width: 4px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--pink);
+}
+
+.bar.top i {
+  background: var(--orange);
+}
+
+.bar em {
+  font-style: normal;
+  color: var(--ink-soft);
 }

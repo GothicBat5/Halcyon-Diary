@@ -1,6 +1,4 @@
-
 :root {
-  /* Palette */
   --paper: #fff7f2;
   --blush: #fde4e4;
   --ink: #4b2e36;
@@ -9,72 +7,37 @@
   --lime: #b9d66b;
   --orange: #e8913f;
   --plum: #7a3b52;
-
-  /* Accent colour for the current notebook, topic or pen name */
   --c: var(--pink);
-
-  /* Misc */
   --line: color-mix(in srgb, var(--ink) 14%, transparent);
   --r: 16px;
-
-  /* Type */
   --display: 'Caveat', 'Segoe Print', cursive;
   --body: 'Nunito', system-ui, sans-serif;
 }
-
-
-/*
-   Reset and page */
 
 * {
   box-sizing: border-box;
 }
 
-html {
+html,
+body {
   height: 100%;
 }
 
 body {
-  min-height: 100%;
   margin: 0;
   font: 400 16px/1.6 var(--body);
   color: var(--ink);
-
-  position: relative;
-  isolation: isolate;
-  background-color: #f8f5f0;
-  
   background:
     radial-gradient(circle at 12% 0%, var(--blush), transparent 45%),
-    radial-gradient(
-      circle at 100% 100%,
-      color-mix(in srgb, var(--lime) 22%, var(--paper)),
-      transparent 50%
-    ),
+    radial-gradient(circle at 100% 100%, color-mix(in srgb, var(--lime) 22%, var(--paper)), transparent 50%),
     var(--paper);
   background-attachment: fixed;
 }
 
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-
-  background:
-  linear-gradient(rgba(241, 225, 193, 0.68), rgba(240, 243, 255, 0.696)),
-    url("visuals/clay.jpeg");
-
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-
 ul {
+  list-style: none;
   margin: 0;
   padding: 0;
-  list-style: none;
 }
 
 button,
@@ -90,22 +53,19 @@ select {
   outline-offset: 2px;
 }
 
-
-/*Header*/
-
 .top {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 1rem;
-  padding: 0.8rem clamp(1rem, 4vw, 2.5rem);
+  justify-content: space-between;
+  padding: .8rem clamp(1rem, 4vw, 2.5rem);
   border-bottom: 2px dashed var(--line);
 }
 
 .top .actions {
   display: flex;
+  gap: .6rem;
   align-items: center;
-  gap: 0.6rem;
 }
 
 .brand {
@@ -116,29 +76,27 @@ select {
 
 .beta {
   display: inline-block;
-  margin-left: 0.2rem;
-  padding: 0.05rem 0.5rem;
+  background: var(--lime);
   border: 2px solid var(--ink);
   border-radius: 999px;
-  background: var(--lime);
-  font: 700 0.65rem/1.4 var(--body);
+  font: 700 .65rem/1.4 var(--body);
+  padding: 0 .45rem;
   vertical-align: middle;
+  margin-left: .2rem;
 }
-
-/* buttonz */
 
 .btn {
   display: inline-block;
-  padding: 0.4rem 1rem;
   border: 2px solid var(--ink);
-  border-radius: 999px;
   background: var(--paper);
-  box-shadow: 2px 2px 0 var(--ink);
-  color: inherit;
-  font-weight: 700;
-  text-decoration: none;
+  border-radius: 999px;
+  padding: .4rem 1rem;
   cursor: pointer;
-  transition: transform 0.12s, box-shadow 0.12s;
+  font-weight: 700;
+  color: inherit;
+  text-decoration: none;
+  box-shadow: 2px 2px 0 var(--ink);
+  transition: transform .12s, box-shadow .12s;
 }
 
 .btn:hover {
@@ -151,12 +109,6 @@ select {
   box-shadow: 0 0 0 var(--ink);
 }
 
-.btn:disabled {
-  opacity: 0.4;
-  pointer-events: none;
-}
-
-/* Variants */
 .btn.primary {
   background: var(--lime);
 }
@@ -166,102 +118,83 @@ select {
 }
 
 .btn.small {
-  padding: 0.15rem 0.7rem;
-  font-size: 0.85rem;
+  padding: .15rem .7rem;
+  font-size: .85rem;
 }
 
 .btn.block {
   width: 100%;
 }
 
-/*Form fields (inside dialogs and card boxes) */
+.btn:disabled {
+  opacity: .4;
+  pointer-events: none;
+}
+
+dialog {
+  border: 2px solid var(--ink);
+  border-radius: var(--r);
+  background: var(--paper);
+  color: var(--ink);
+  padding: 1.4rem;
+  width: min(92vw, 400px);
+  box-shadow: 6px 6px 0 var(--ink);
+}
+
+dialog::backdrop {
+  background: rgba(75, 46, 54, .45);
+}
+
+dialog h2 {
+  font: 700 1.8rem var(--display);
+  margin: 0 0 .6rem;
+}
 
 dialog label,
 .card-box label {
   display: block;
-  margin: 0.8rem 0 0.25rem;
   font-weight: 700;
+  margin: .8rem 0 .25rem;
 }
 
-dialog input[type='text'],
+dialog input[type=text],
 dialog select,
-.card-box input[type='text'],
+.card-box input[type=text],
 .card-box textarea {
   width: 100%;
-  padding: 0.5rem 0.7rem;
+  padding: .5rem .7rem;
   border: 2px solid var(--ink);
   border-radius: 12px;
   background: #fff;
 }
 
-
-/* Edit D */
-
-dialog {
-  width: min(92vw, 400px);
-  padding: 1.4rem;
-  border: 2px solid var(--ink);
-  border-radius: var(--r);
-  background: var(--paper);
-  box-shadow: 6px 6px 0 var(--ink);
-  color: var(--ink);
-}
-
-dialog::backdrop {
-  background: rgba(75, 46, 54, 0.45);
-}
-
-dialog h2 {
-  margin: 0 0 0.6rem;
-  font: 700 1.8rem var(--display);
-}
-
-.dlg-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.6rem;
-  margin-top: 1.2rem;
-}
-
-.dlg-actions .left {
-  margin-right: auto;
-}
-
-
-/* Colour swatches */
-
 .swatches {
   display: flex;
   flex-wrap: wrap;
+  gap: .45rem;
   align-items: center;
-  gap: 0.45rem;
 }
 
 .swatch {
   width: 30px;
   height: 30px;
-  padding: 0;
-  border: 2px solid var(--ink);
   border-radius: 50%;
+  border: 2px solid var(--ink);
   background: var(--s);
   cursor: pointer;
+  padding: 0;
 }
 
-.swatch[aria-pressed='true'] {
-  box-shadow:
-    0 0 0 3px var(--paper),
-    0 0 0 5px var(--ink);
+.swatch[aria-pressed=true] {
+  box-shadow: 0 0 0 3px var(--paper), 0 0 0 5px var(--ink);
   transform: scale(1.1);
 }
-
-
-/* Free colour picker */
 
 .picker {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-  margin-top: 0.7rem;
+  gap: .6rem;
+  margin-top: .7rem;
   font-weight: 600;
 }
 
@@ -276,12 +209,107 @@ dialog h2 {
 }
 
 .picker output {
+  font-size: .85rem;
   color: var(--ink-soft);
-  font-size: 0.85rem;
+}
+
+.dlg-actions {
+  display: flex;
+  gap: .6rem;
+  justify-content: flex-end;
+  margin-top: 1.2rem;
+}
+
+.dlg-actions .left {
+  margin-right: auto;
 }
 
 @media (prefers-reduced-motion: reduce) {
   * {
     transition: none !important;
   }
+}
+
+.page {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 1.5rem clamp(1rem, 4vw, 2.5rem) 4rem;
+}
+
+.card-box {
+  background: #fffdf8;
+  border: 2px solid var(--ink);
+  border-radius: var(--r);
+  padding: 1.2rem 1.4rem 1.4rem;
+  margin-bottom: 1.6rem;
+  box-shadow: 5px 5px 0 var(--pink);
+}
+
+.card-box h2 {
+  font: 700 1.9rem var(--display);
+  margin: 0;
+}
+
+.card-box .row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.card-box textarea {
+  resize: vertical;
+}
+
+.btn-row {
+  display: flex;
+  gap: .7rem;
+  flex-wrap: wrap;
+  margin: .8rem 0;
+}
+
+.hint {
+  color: var(--ink-soft);
+  font-size: .9rem;
+  margin: .5rem 0;
+}
+
+.saved {
+  color: var(--plum);
+  font-weight: 700;
+  min-height: 1.4em;
+  margin: .4rem 0 0;
+}
+
+.slots {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .1rem .8rem;
+}
+
+.chk {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  font-weight: 600;
+  margin: .2rem 0;
+}
+
+.chk small {
+  color: var(--ink-soft);
+  font-weight: 400;
+}
+
+.dhint {
+  margin: .2rem 0 0;
+  font-size: .82rem;
+  color: var(--ink-soft);
+}
+
+.font-prev {
+  margin: .4rem 0 0;
+  padding: .3rem .7rem;
+  background: #fff;
+  border: 2px dashed var(--line);
+  border-radius: 10px;
 }

@@ -1,0 +1,68 @@
+.page h1 {
+  font: 700 clamp(2.4rem, 7vw, 3.6rem)/1 var(--display);
+  color: var(--plum);
+  margin: .4rem 0 1.2rem;
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: .7rem;
+  margin: .8rem 0;
+}
+
+.stat {
+  border: 2px solid var(--ink);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--lime) 28%, #fff);
+  padding: .5rem .8rem;
+  text-align: center;
+}
+
+.stat b {
+  display: block;
+  font: 700 1.9rem/1.1 var(--display);
+}
+
+.stat span {
+  font-size: .8rem;
+  color: var(--ink-soft);
+}
+
+input[type=file] {
+  display: block;
+  width: 100%;
+  padding: .6rem;
+  border: 2px dashed var(--ink);
+  border-radius: 12px;
+  background: #fff;
+  margin: .8rem 0;
+  cursor: pointer;
+}
+
+.modes {
+  margin: .4rem 0 .8rem;
+}
+
+.snaps li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .6rem;
+  flex-wrap: wrap;
+  padding: .5rem .8rem;
+  margin-top: .5rem;
+  border: 2px solid var(--ink);
+  border-radius: 12px;
+  background: #fff;
+}
+
+.snaps small {
+  display: block;
+  color: var(--ink-soft);
+}
+
+.snaps .acts {
+  display: flex;
+  gap: .4rem;
+}
