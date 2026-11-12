@@ -38,11 +38,6 @@ Store.ready.then(async () => {
     img.src = src;
   });
 
-  try {
-    const saved = await Store.getImage(KEY);
-    if (saved) show(saved);
-  } catch (e) {}
-
   const openDialog = () => {
     const dlg = document.createElement('dialog');
     dlg.className = 'bg-dialog';
@@ -99,4 +94,9 @@ Store.ready.then(async () => {
   };
 
   document.getElementById('bgBtn').onclick = openDialog;
+
+  try {
+    const saved = await Store.getImage(KEY);
+    if (saved) show(saved);
+  } catch (e) {}
 });

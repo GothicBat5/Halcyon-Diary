@@ -1,4 +1,6 @@
-                                                    */
+/* Shared core: storage engine, writer/pen-name helpers, backup tools, edit dialog.
+   Storage: IndexedDB (durable, roomy) + an instant localStorage mirror (so a page change never loses a keystroke).
+   Pages must wait for it:  Store.ready.then(() => { ... })                                                      */
 const Store = (() => {
   const KEY = 'cozy-diary-v1', VERSION = 2;
   const COLORS = ['#f2a7bb','#e86f93','#b9d66b','#7fa650','#e8913f','#c4562f','#f5c96a','#f7b79a',
@@ -68,14 +70,18 @@ const Store = (() => {
   /* ---- IndexedDB helpers ---- */
   const openDB = () => new Promise((res, rej) => {
     if (!window.indexedDB) return rej(new Error('no idb'));
-    let r; try { r = indexedDB.open('cozy-diary', 2); } catch (e) { return rej(e); }
+    let r, done = false, timer;
+    const finish = (fn, v) => { if (!done) { done = true; clearTimeout(timer); fn(v); } else if (v && v.close) v.close(); };
+    timer = setTimeout(() => finish(rej, new Error('timeout')), 3000);
+    try { r = indexedDB.open('cozy-diary', 2); } catch (e) { return finish(rej, e); }
     r.onupgradeneeded = () => {
       const d = r.result;
       if (!d.objectStoreNames.contains('kv')) d.createObjectStore('kv');
       if (!d.objectStoreNames.contains('snap')) d.createObjectStore('snap', { keyPath: 'id', autoIncrement: true });
       if (!d.objectStoreNames.contains('img')) d.createObjectStore('img');
     };
-    r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); r.onblocked = () => rej(new Error('blocked'));
+    r.onsuccess = () => { const d = r.result; d.onversionchange = () => d.close(); finish(res, d); };
+    r.onerror = () => finish(rej, r.error);
   });
   const tx = (store, mode, fn) => new Promise((res, rej) => {
     const t = db.transaction(store, mode); const req = fn(t.objectStore(store));
@@ -204,11 +210,13 @@ h4{margin:0;font-size:1.2rem}.m{margin:0 0 .4rem;color:#8a6870;font-size:.85rem}
     try { db = await openDB(); fromDb = await tx('kv', 'readonly', s => s.get('data')); status.backend = 'indexeddb'; }
     catch (e) { db = null; status.backend = 'localstorage'; }
     const best = [fromDb, fromMirror()].filter(Boolean).sort((a, b) => ((b.meta && b.meta.savedAt) || 0) - ((a.meta && a.meta.savedAt) || 0))[0];
-    data = normalize(best || seed());
+    try { data = normalize(best || seed()); } catch (e) { data = normalize(seed()); }
     save(); flush();
-    try { status.persisted = await navigator.storage.persisted(); } catch (e) {}
-    try { const s = await snapshots(); if (db && (!s.length || Date.now() - s[0].at > 20 * 36e5)) await snapshot('daily'); } catch (e) {}
-  })();
+    (async () => {
+      try { status.persisted = await Promise.race([navigator.storage.persisted(), new Promise(r => setTimeout(() => r(null), 1000))]); } catch (e) {}
+      try { const s = await snapshots(); if (db && (!s.length || Date.now() - s[0].at > 20 * 36e5)) await snapshot('daily'); } catch (e) {}
+    })();
+  })().catch(() => { if (!data) data = normalize(seed()); });
 
   return { ready, get data() { return data; }, status, save, flush, uid, esc, slot, mkEntry, authorFor, promptFor, authorName,
     counts, exportJSON, exportHTML, parseBackup, replaceAll, merge, download, estimate, requestPersist,
