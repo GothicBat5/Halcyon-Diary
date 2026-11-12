@@ -43,7 +43,7 @@ Store.ready.then(async () => {
     dlg.className = 'bg-dialog';
     dlg.innerHTML = `<h2>Background</h2>
       <div class="bg-preview" id="bgPrev"><span>No image yet</span></div>
-      <p class="dhint" id="bgMsg" role="status">Pick a photo from your device. It stays on this device and is resized to keep the diary light.</p>
+      <p class="dhint" id="bgMsg" role="status">Pick a photo from your device.</p>
       <input type="file" id="bgFile" accept="image/*" hidden>
       <div class="dlg-actions">
         <button type="button" class="btn danger small left" id="bgDel">Remove</button>
