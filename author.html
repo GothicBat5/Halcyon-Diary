@@ -1,64 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>About the writer · My Cozy Diary</title>
-
-  <link rel="icon" type="image/png" href="photo/book.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
-
-  <link rel="stylesheet" href="art/base.css">
-  <link rel="stylesheet" href="art/author.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>About the writer · My Cozy Diary</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Dancing+Script:wght@500;700&family=Indie+Flower&family=Lora:wght@500;700&family=Nunito:wght@400;600;700&family=Patrick+Hand&family=Special+Elite&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="art/base.css">
+<link rel="stylesheet" href="art/author.css">
 </head>
-
 <body>
-  <header class="top">
-    <a class="brand" href="index.html">← shelf</a>
+<header class="top">
+  <a class="brand" href="index.html">← shelf</a>
+  <div class="actions"><a class="btn small" href="backup.html">💾 Backup</a><span class="beta">beta</span></div>
+</header>
+<main class="page">
+  <h1>About the writer</h1>
 
-    <div class="actions">
-      <span class="beta">beta</span>
-    </div>
-  </header>
+  <section class="card-box">
+    <h2>You</h2>
+    <label for="wName">Your name</label>
+    <input type="text" id="wName" maxlength="40" placeholder="What should the diary call you?">
+    <label for="wBio">A few words about you</label>
+    <textarea id="wBio" rows="3" maxlength="300" placeholder="Who is writing these pages?"></textarea>
+    <p class="saved" id="wSaved"></p>
+  </section>
 
-  <main class="author-page">
-    <h1>About the writer</h1>
+  <section class="card-box">
+    <h2>Your writing rhythm</h2>
+    <div class="stat-grid" id="stats"></div>
+    <div class="bars" id="bars"></div>
+    <p class="hint" id="barNote"></p>
+  </section>
 
-    <!-- Your details -->
-    <section class="card-box">
-      <h2>You</h2>
-
-      <label for="wName">Your name</label>
-      <input type="text" id="wName" maxlength="40" placeholder="What should the diary call you?">
-
-      <label for="wBio">A few words about you</label>
-      <textarea id="wBio" rows="3" maxlength="300" placeholder="Who is writing these pages?"></textarea>
-
-      <p class="saved" id="wSaved"></p>
-    </section>
-
-    <!-- Pen names -->
-    <section class="card-box">
-      <div class="row">
-        <h2>Pen names</h2>
-        <button class="btn primary small" id="newAuthor">+ New pen name</button>
-      </div>
-
-      <p class="hint" id="nowHint"></p>
-      <ul id="authorList" class="authors"></ul>
-
-      <p class="hint">
-        Beta: when you start a new page, the diary signs it with the pen name
-        that matches the time of day. You can change the name on any page.
-      </p>
-    </section>
-  </main>
-
-  <script src="behavior/common.js"></script>
-  <script src="behavior/author.js"></script>
+  <section class="card-box">
+    <div class="row"><h2>Pen names</h2><button class="btn primary small" id="newAuthor">+ New pen name</button></div>
+    <p class="hint" id="nowHint"></p>
+    <ul id="authorList" class="authors"></ul>
+    <p class="hint">Each pen name can have its own handwriting and several times of day. A new page is signed by the one that matches the time, and you can change it on any page.</p>
+  </section>
+</main>
+<script src="behavior/common.js"></script>
+<script src="behavior/author.js"></script>
 </body>
-
 </html>

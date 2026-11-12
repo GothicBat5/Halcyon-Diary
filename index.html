@@ -1,41 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>My Cozy Diary</title>
-
-  <link rel="icon" type="image/png" href="photo/one.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
-
-  <link rel="stylesheet" href="art/base.css">
-  <link rel="stylesheet" href="art/shelf.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My Cozy Diary</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="art/base.css">
+<link rel="stylesheet" href="art/shelf.css">
 </head>
-
 <body>
-  <header class="top">
-    <a class="brand" href="index.html">my cozy diary</a>
-
-    <div class="actions">
-      <a class="btn" href="author.html">✒ Author <span class="beta">beta</span></a>
-      <button class="btn primary" id="newBook">+ New notebook</button>
-    </div>
-  </header>
-
-  <main class="shelf-page">
-    <section class="intro">
-      <h1 id="hello">Good evening.</h1>
-      <p>Pick a notebook from the shelf, or start a fresh one.</p>
-    </section>
-
-    <section id="shelf" class="shelf" aria-label="Notebooks"></section>
-  </main>
-
-  <script src="behavior/common.js"></script>
-  <script src="behavior/shelf.js"></script>
+<header class="top">
+  <a class="brand" href="index.html">my cozy diary</a>
+  <div class="actions">
+    <a class="btn" href="author.html">✒ Author <span class="beta">beta</span></a>
+    <a class="btn" href="backup.html">💾 Backup</a>
+    <button class="btn primary" id="newBook">+ New notebook</button>
+  </div>
+</header>
+<main class="shelf-page">
+  <section class="intro">
+    <h1 id="hello">Good evening.</h1>
+    <p>Pick a notebook from the shelf, or start a fresh one.</p>
+  </section>
+  <section id="shelf" class="shelf" aria-label="Notebooks"></section>
+</main>
+<script src="behavior/common.js"></script>
+<script src="behavior/shelf.js"></script>
 </body>
-
 </html>

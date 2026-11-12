@@ -1,76 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Notebook · My Cozy Diary</title>
-
-  <link rel="icon" type="image/png" href="photo/readings.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
-
-  <link rel="stylesheet" href="art/base.css">
-  <link rel="stylesheet" href="art/notebook.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Notebook · My Cozy Diary</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Dancing+Script:wght@500;700&family=Indie+Flower&family=Lora:wght@500;700&family=Nunito:wght@400;600;700&family=Patrick+Hand&family=Special+Elite&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="art/base.css">
+<link rel="stylesheet" href="art/notebook.css">
 </head>
-
 <body>
-  <header class="top">
-    <a class="brand" href="index.html">← shelf</a>
-    <h1 class="nb-title" id="nbTitle"></h1>
-
-    <div class="actions">
-      <a class="btn small" href="author.html">✒ Author</a>
-      <button class="btn small" id="editBook">Cover</button>
-    </div>
-  </header>
-
-  <div class="layout" id="layout">
-
-    <!-- Column 1: topics -->
-    <aside class="topics" aria-label="Topics">
-      <div class="topics-head">
-        <span>Topics</span>
-        <button class="btn small" id="newTopic">+ Topic</button>
-      </div>
-      <ul id="topicList"></ul>
-    </aside>
-
-    <!-- Column 2: pages in the chosen topic -->
-    <section class="entries" aria-label="Pages">
-      <button class="btn primary block" id="newEntry">+ New page</button>
-      <ul id="entryList"></ul>
-    </section>
-
-    <!-- Column 3: the page being written -->
-    <section class="editor" id="editor" aria-label="Page editor">
-      <div class="paper" id="paper">
-        <div class="paper-bar">
-          <button class="btn small back" id="backToList">← Pages</button>
-          <span class="date" id="entryDate"></span>
-
-          <label class="by">
-            ✒ <select id="entryAuthor" aria-label="Written by"></select>
-          </label>
-
-          <span class="saved" id="saved"></span>
-          <button class="btn small danger" id="delEntry">Delete</button>
-        </div>
-
-        <input id="entryTitle" class="entry-title" placeholder="Title of this page" aria-label="Title">
-        <textarea id="entryBody" class="entry-body" placeholder="Dear diary…" aria-label="Write here"></textarea>
-
-        <p class="count" id="wordCount" aria-live="polite"></p>
-      </div>
-
-      <p class="empty" id="editorEmpty">Choose a page, or start a new one. 🍂</p>
-    </section>
-
+<header class="top">
+  <a class="brand" href="index.html">← shelf</a>
+  <h1 class="nb-title" id="nbTitle"></h1>
+  <div class="actions">
+    <a class="btn small" href="author.html">✒ Author</a>
+    <a class="btn small" href="backup.html" title="Backup &amp; storage">💾</a>
+    <button class="btn small" id="editBook">Cover</button>
   </div>
+</header>
 
-  <script src="behavior/common.js"></script>
-  <script src="behavior/notebook.js"></script>
+<div class="layout" id="layout">
+  <aside class="topics" aria-label="Topics">
+    <div class="topics-head"><span>Topics</span><button class="btn small" id="newTopic">+ Topic</button></div>
+    <ul id="topicList"></ul>
+  </aside>
+
+  <section class="entries" aria-label="Pages">
+    <button class="btn primary block" id="newEntry">+ New page</button>
+    <ul id="entryList"></ul>
+  </section>
+
+  <section class="editor" id="editor" aria-label="Page editor">
+    <div class="paper" id="paper">
+      <div class="paper-bar">
+        <button class="btn small back" id="backToList">← Pages</button>
+        <span class="date" id="entryDate"></span>
+        <label class="by">✒ <select id="entryAuthor" aria-label="Written by"></select></label>
+        <span class="saved" id="saved"></span>
+        <button class="btn small danger" id="delEntry">Delete</button>
+      </div>
+      <input id="entryTitle" class="entry-title" placeholder="Title of this page" aria-label="Title">
+      <textarea id="entryBody" class="entry-body" placeholder="Dear diary…" aria-label="Write here"></textarea>
+    </div>
+    <p class="empty" id="editorEmpty">Choose a page, or start a new one. 🍂</p>
+  </section>
+</div>
+<script src="behavior/common.js"></script>
+<script src="behavior/notebook.js"></script>
 </body>
-
 </html>

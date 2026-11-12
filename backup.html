@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Backup &amp; storage · My Cozy Diary</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="art/base.css">
+<link rel="stylesheet" href="art/backup.css">
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="index.html">← shelf</a>
+  <div class="actions"><a class="btn small" href="author.html">✒ Author</a></div>
+</header>
+<main class="page">
+  <h1>Backup &amp; storage</h1>
+
+  <section class="card-box">
+    <h2>Your diary at a glance</h2>
+    <div class="stat-grid" id="glance"></div>
+    <p class="hint" id="storeNote"></p>
+    <button class="btn small" id="persist" hidden>Ask the browser to keep my diary safe</button>
+  </section>
+
+  <section class="card-box">
+    <h2>Download your diary</h2>
+    <p class="hint">The backup file holds everything (notebooks, topics, pages, pen names) and can be imported on any computer or browser. The reading copy is a single page you can open anywhere, even without this app.</p>
+    <div class="btn-row">
+      <button class="btn primary" id="dlJson">Download backup (.json)</button>
+      <button class="btn" id="dlHtml">Download reading copy (.html)</button>
+    </div>
+  </section>
+
+  <section class="card-box">
+    <h2>Import a backup</h2>
+    <input type="file" id="file" accept=".json,application/json" aria-label="Choose a backup file">
+    <div class="modes">
+      <label class="chk"><input type="radio" name="mode" value="merge" checked> Add to what I have <small>keeps everything, adds missing pages</small></label>
+      <label class="chk"><input type="radio" name="mode" value="replace"> Replace my diary <small>a safety copy is taken first</small></label>
+    </div>
+    <button class="btn primary" id="doImport" disabled>Import</button>
+    <p class="saved" id="impMsg" role="status"></p>
+  </section>
+
+  <section class="card-box">
+    <div class="row"><h2>Safety copies</h2><button class="btn small" id="snapNow">Take one now</button></div>
+    <p class="hint" id="snapNote">The diary keeps a copy about once a day, plus one before every import or restore. The newest 8 are kept in this browser.</p>
+    <ul id="snaps" class="snaps"></ul>
+  </section>
+
+  <section class="card-box">
+    <h2>Start over</h2>
+    <p class="hint">Clears every notebook and pen name. A safety copy is taken first, so you can still restore it above.</p>
+    <button class="btn danger" id="wipe">Erase my diary…</button>
+  </section>
+</main>
+<script src="behavior/common.js"></script>
+<script src="behavior/backup.js"></script>
+</body>
+</html>
