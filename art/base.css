@@ -74,17 +74,6 @@ select {
   text-decoration: none;
 }
 
-.beta {
-  display: inline-block;
-  background: var(--lime);
-  border: 2px solid var(--ink);
-  border-radius: 999px;
-  font: 700 .65rem/1.4 var(--body);
-  padding: 0 .45rem;
-  vertical-align: middle;
-  margin-left: .2rem;
-}
-
 .btn {
   display: inline-block;
   border: 2px solid var(--ink);
